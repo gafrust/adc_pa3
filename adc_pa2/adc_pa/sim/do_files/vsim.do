@@ -44,6 +44,8 @@ vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/tb_adc_pa.v
 vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/adc_pa.v
 vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/RES.v
 vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/pulse_stretcher.v
+vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/averager.v
+
 
 
 # При необходимости компиляция VHDL-модели IP (закомментировано)
@@ -78,5 +80,5 @@ do vsim_1_wave.do
 
 # -------------------- Запуск симуляции --------------------
 # Запускаем симуляцию на 3500 микросекунд модельного времени
-run 35000 us
+run 1000 us
 

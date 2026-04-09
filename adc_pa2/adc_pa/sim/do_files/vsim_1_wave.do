@@ -20,14 +20,28 @@ add wave -noupdate -radix unsigned /tb_adc_pa/adc_data_ch1
 # -------------------- Внутренние сигналы тестируемого модуля (uut) --------------------
 add wave -noupdate -divider {UUT internal}
 add wave -noupdate /tb_adc_pa/uut/rst_i
-add wave -noupdate /tb_adc_pa/uut/state__0
-add wave -noupdate /tb_adc_pa/uut/adc_sck_reg_BUFG
+add wave -noupdate /tb_adc_pa/uut/state
+add wave -noupdate /tb_adc_pa/uut/adc_sck_reg
 add wave -noupdate /tb_adc_pa/uut/adc_sck_reg_prev
 add wave -noupdate /tb_adc_pa/uut/adc_sdo_sync
+add wave -noupdate /tb_adc_pa/uut/adc_data_ch0
+add wave -noupdate /tb_adc_pa/uut/adc_data_ch1
+
+add wave -noupdate /tb_adc_pa/uut/avg_ch0
+add wave -noupdate /tb_adc_pa/uut/avg_ch1
+add wave -noupdate /tb_adc_pa/uut/avg_ready
+
+
+add wave -noupdate /tb_adc_pa/uut/data_valid_ch0   
+add wave -noupdate /tb_adc_pa/uut/data_valid_ch1    
+   
+add wave -noupdate /tb_adc_pa/uut/data_ready         
+
+
 
 # -------------------- Счётчики (по отдельным битам, если нужно) --------------------
 add wave -noupdate -divider {Counters}
-add wave -noupdate -radix unsigned /tb_adc_pa/uut/bit_counter_reg_n_0_[0]
+add wave -noupdate -radix unsigned /tb_adc_pa/uut/bit_counter
 add wave -noupdate -radix unsigned /tb_adc_pa/uut/bit_counter_reg_n_0_[1]
 add wave -noupdate -radix unsigned /tb_adc_pa/uut/bit_counter_reg_n_0_[2]
 add wave -noupdate -radix unsigned /tb_adc_pa/uut/bit_counter_reg_n_0_[3]

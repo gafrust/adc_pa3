@@ -24,8 +24,8 @@ adc_pa uut (
     .adc_sck_o  (adc_sck_o),
     .adc_conv_o (adc_conv_o),
     .adc_sdo_i  (adc_sdo_i),
-    .adc_data_ch0(adc_data_ch0),
-    .adc_data_ch1(adc_data_ch1),
+    //.adc_data_ch0(adc_data_ch0),
+    //.adc_data_ch1(adc_data_ch1),
     .tx_active_i (tx_active_i),
     .adc_conv_flag(adc_conv_flag)
 );
@@ -57,6 +57,7 @@ initial begin
     $display("=== Nachalo testa ===");
     $display("Testovie dannie: 0x%08X", test_data);
     for (i_sample=31 ; i_sample >=0; i_sample=i_sample-1) begin
+    test_data = { 14'(i_sample), 2'b11, 14'(31 - i_sample) };
     // Gdem pervogo CONV
     @(posedge uut.adc_conv_reg);
    
@@ -91,7 +92,7 @@ initial begin
     
     $display("=== Peredicha zavershena ===");
     
-    #1000000;
+    #100000;
    // $finish;
 end
 
