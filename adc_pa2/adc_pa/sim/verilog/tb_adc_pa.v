@@ -6,13 +6,13 @@ module tb_adc_pa();
 reg         clk_120_i;
 reg         adc_sdo_i;
 reg       tx_active_i;
-integer       i_sample;
 wire        adc_sck_o;
 wire        adc_conv_o;
 wire     adc_conv_flag;
 
 wire [13:0] adc_data_ch0;
 wire [13:0] adc_data_ch1;
+integer       i_sample;
 
 // Testovie dannie
 reg [31:0] test_data;
