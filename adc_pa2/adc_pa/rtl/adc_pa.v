@@ -3,6 +3,7 @@
 module adc_pa(
     input clk_120_i,
     (* DONT_TOUCH = "yes" *) input tx_active_i,
+    (* DONT_TOUCH = "yes" *) input [3:0] tx_mode_i, //Regim raboti peredatchika
     (* IOB = "TRUE" *) output reg adc_sck_o,
     (* IOB = "TRUE" *) output reg adc_conv_o,
     //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch0,      // ������ ������ 0 (�������������� ���)
@@ -28,6 +29,7 @@ reg adc_sck_reg;
 (* DONT_TOUCH = "yes" *) reg [13:0] shift_reg_ch0;     // 14-������ ��������� ������� ��� ������ 0
 (* DONT_TOUCH = "yes" *) reg [13:0] shift_reg_ch1;     // 14-������ ��������� ������� ��� ������ 1
 (* DONT_TOUCH = "yes" *)  wire tx_active_o;
+(* DONT_TOUCH = "yes" *)  wire [3:0] tx_mode_i_fix;
 
 (* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch0;      
 (* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch1;
@@ -43,8 +45,10 @@ RES RES(
 (* DONT_TOUCH = "yes" *) pulse_stretcher pulse_stretcher(
     .clk(clk_120_i),          // 120 МГц
     .rst(rst_i),
-    (* DONT_TOUCH = "yes" *) .tx_active_in(tx_active_i), // короткий импульс (8 нс)
-   (* DONT_TOUCH = "yes" *)  .tx_active_out(tx_active_o) // растянутый импульс (100 нс)
+    (* DONT_TOUCH = "yes" *) .tx_active_i(tx_active_i), // короткий импульс (8 нс)
+    (* DONT_TOUCH = "yes" *) .tx_mode_i(tx_mode_i),
+    (* DONT_TOUCH = "yes" *) .tx_mode_i_fix(tx_mode_i_fix),
+    (* DONT_TOUCH = "yes" *) .tx_active_out(tx_active_o) // растянутый импульс (100 нс)
 );
 
 

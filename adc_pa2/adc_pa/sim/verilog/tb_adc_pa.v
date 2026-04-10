@@ -17,6 +17,10 @@ wire [13:0] adc_data_ch1;
 // Testovie dannie
 reg [31:0] test_data;
 integer    bit_cnt;
+integer sr_sum_ch0;
+integer sr_sum_ch1;
+integer sum_ch0;
+integer sum_ch1;
 
 // Instancirovanie modula
 adc_pa uut (
@@ -49,7 +53,10 @@ initial begin
     #1000
     tx_active_i = 1'b0;
     i_sample = 31;
-    
+    sum_ch0 = 0;
+    sum_ch1 = 0;
+    sr_sum_ch0 = 0;
+    sr_sum_ch1 = 0;
    end 
     // Testovie dannie (kanal0=1010, dva takta razdelenia=11, kana2=0101)
     test_data = {14'd10, 2'b11, 14'd5};
@@ -58,6 +65,8 @@ initial begin
     $display("Testovie dannie: 0x%08X", test_data);
     for (i_sample=31 ; i_sample >=0; i_sample=i_sample-1) begin
     test_data = { 14'(i_sample), 2'b11, 14'(31 - i_sample) };
+    sum_ch0 = sum_ch0 + i_sample;
+    sum_ch1 = sum_ch1 + (31 - i_sample);
     // Gdem pervogo CONV
     @(posedge uut.adc_conv_reg);
    
@@ -72,10 +81,20 @@ initial begin
         @(posedge adc_sck_o);
         adc_sdo_i = test_data[bit_cnt];
        // $display("  bit %2d: %d", bit_cnt, adc_sdo_i);
-       $display("i_sample = %0d ", i_sample);
+      // $display("i_sample = %0d ", i_sample);
     end
   end 
 
+sr_sum_ch0 =sum_ch0/32;
+sr_sum_ch1 =sum_ch1/32;
+$display(" sr_sum_ch0 0x%0D, sr_sum_ch1 0x%0D", sr_sum_ch0,sr_sum_ch1);
+
+@(posedge uut.adc_pa.avg_ready) 
+$display(" uut.adc_pa.adc_averager.avg_ch0 0x%0D, uut.adc_pa.adc_averager.avg_ch1 0x%0D", uut.adc_pa.adc_averager.avg_ch0,uut.adc_pa.adc_averager.avg_ch1);
+
+if(uut.adc_pa.adc_averager.avg_ch0==sr_sum_ch0 && uut.adc_pa.adc_averager.avg_ch1==sr_sum_ch1)begin
+$display(" usrednenie pravilnoe");
+end
     # 20
     tx_active_i = 1'b1;
     $display("tx_active_i =1 na vremeni %0t ms", $time);

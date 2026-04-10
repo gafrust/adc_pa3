@@ -1,7 +1,9 @@
 module pulse_stretcher (
     input wire clk,          // 120 МГц
     input wire rst,
-    input wire tx_active_in, // короткий импульс (8 нс)
+    input wire tx_active_i, // короткий импульс (8 нс)
+    input wire [3:0] tx_mode_i,
+    output reg [3:0 ] tx_mode_i_fix,
     output reg tx_active_out // растянутый импульс (100 нс)
 );
 
@@ -9,6 +11,7 @@ module pulse_stretcher (
     localparam WIDTH_CYCLES = 12;  
     reg [6:0] counter;      // 4 бита хватит (0..15)
     reg in_sync, in_prev;
+    //reg  [3:0 ] tx_mode_i_fix,
     wire in_rising;
 
     // Синхронизация входа и детектор фронта
@@ -17,7 +20,7 @@ module pulse_stretcher (
             in_sync <= 1'b0;
             in_prev <= 1'b0;
         end else begin
-            in_sync <= tx_active_in;
+            in_sync <= tx_active_i;
             in_prev <= in_sync;
         end
     end
@@ -32,6 +35,7 @@ module pulse_stretcher (
         end else begin
             if (in_rising) begin
                 tx_active_out <= 1'b1;
+                tx_mode_i_fix <= tx_mode_i;
                 counter <= WIDTH_CYCLES - 1; // загружаем счётчик
             end else if (tx_active_out) begin
                 if (counter == 6'd0)
