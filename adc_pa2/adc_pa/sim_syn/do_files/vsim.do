@@ -41,7 +41,7 @@ vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/tb_adc_pa.v
 # Компилируем основной RTL-модуль adc_pa.v
 # +define+__XILINX_SIMULATOR__ – определяет макрос, часто используемый в коде Xilinx
 # +incdir+$path_icnl2 +incdir+$path_icnl – добавляем два каталога для поиска include-файлов
-vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/top7_netlist.v
+vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/top8_netlist.v
 
 # При необходимости компиляция VHDL-модели IP (закомментировано)
 #vcom -work work ../../ip/ukl_nano_rx_dF_dsp/ipmanager/ukl_nano_rx_dF_dsp/sim/ukl_nano_rx_dF_dsp.vhd

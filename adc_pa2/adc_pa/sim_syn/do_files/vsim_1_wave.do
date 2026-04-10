@@ -15,8 +15,8 @@ add wave -noupdate /tb_adc_pa/adc_sdo_i
 add wave -noupdate /tb_adc_pa/adc_sck_o
 add wave -noupdate /tb_adc_pa/adc_conv_o
 add wave -noupdate /tb_adc_pa/adc_conv_flag
-add wave -noupdate -radix unsigned /tb_adc_pa/adc_data_ch0
-add wave -noupdate -radix unsigned /tb_adc_pa/adc_data_ch1
+#add wave -noupdate -radix unsigned /tb_adc_pa/adc_data_ch0
+#add wave -noupdate -radix unsigned /tb_adc_pa/adc_data_ch1
 
 # -------------------- Внутренние сигналы тестируемого модуля (uut) --------------------
 add wave -noupdate -divider {UUT Signals}
@@ -27,6 +27,11 @@ add wave -noupdate /tb_adc_pa/uut/adc_sck_o
 add wave -noupdate /tb_adc_pa/uut/adc_conv_o
 add wave -noupdate /tb_adc_pa/uut/adc_sdo_i
 add wave -noupdate /tb_adc_pa/uut/adc_conv_flag
+add wave -noupdate /tb_adc_pa/uut/adc_data_ch0
+add wave -noupdate /tb_adc_pa/uut/adc_data_ch1
+add wave -noupdate /tb_adc_pa/uut/avg_ch0
+add wave -noupdate /tb_adc_pa/uut/avg_ch1
+
 add wave -radix unsigned /tb_adc_pa/uut/state__0
 
 #add wave -r /tb_adc_pa/uut/*shift_reg_ch0*
