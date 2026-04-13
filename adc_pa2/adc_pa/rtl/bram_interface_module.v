@@ -1,6 +1,8 @@
 module bram_interface_module (
     input  wire        clk_i,          // 120 МГц
     input  wire        rst_i,
+    input wire   tx_active_i,
+    input wire [3:0] tx_mode,
     
     // AXI BRAM interface 
     input  wire        axi_en_i,       // strob deistvitelnih dannih
@@ -16,12 +18,12 @@ module bram_interface_module (
     output reg         irq_enable,     // bit [1] razreshenie prerivania
     
     input  wire [31:0] measurement_result,  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
-    input  wire        measurement_ready,   // flag gotovnosti rezultata
+    input  wire        measurement_ready  // flag gotovnosti rezultata
     
-    output reg [15:0] calib_u_pad [0:15],   // kalibrovochnie Upad
-    output reg [15:0] calib_u_otr [0:15],   // kalibrovochnie Uotr
+    //output wire [15:0] calib_u_pad_o,   // kalibrovochnie Upad
+    //output wire [15:0] calib_u_otr_o,   // kalibrovochnie Uotr
     
-    input  wire        threshold_exceeded   // flag previshenia porogov ot modula izmerenii
+    //input  wire        threshold_exceeded   // flag previshenia porogov ot modula izmerenii
 );
 
     //-----------------------------------------------------------------
@@ -36,10 +38,18 @@ module bram_interface_module (
     //-----------------------------------------------------------------
     reg [31:0] reg_ctrl;           // 0x00
     reg [31:0] reg_result;         // 0x04
-    reg [31:0] reg_calib [0:15];   // 0x08...0x24
+    reg [31:0] reg_calib [0:15];   // 0x08...0x48
+
+  reg [15:0] calib_u_pad;  // kalibrovochnie Upad
+  reg [15:0] calib_u_otr;   // kalibrovochnie Uotr
+
+  reg threshold_exceeded; //flag previshenia porogov ot modula izmerenii
+
     
     reg        axi_vd_reg;         // vnutrennii signal validnosti dannih
     integer i;
+
+    
     
     //-----------------------------------------------------------------
     // Ctenie/zapis po interfeisu AXI BRAM
@@ -54,6 +64,9 @@ module bram_interface_module (
             end
             axi_vd_reg <= 1'b0;
             axi_data_o <= 32'd0;
+            calib_u_pad      <= 16'd0;
+            calib_u_otr      <= 16'd0;
+            threshold_exceeded <= 1'b0;
             
         end else begin
             axi_vd_reg <= 1'b0;  // po umolchaniu strob ne activen
@@ -112,6 +125,12 @@ module bram_interface_module (
             // Obnovlenie rezultata izmerenii
             if (measurement_ready) begin
                 reg_result <= measurement_result;
+                if ((measurement_result[31:16] < reg_calib[tx_mode][31:16]) ||
+                                   (reg_calib[tx_mode][15:0] < measurement_result[15:0]))
+                                   begin 
+                                    axi_irq_o <= 1'b1;
+                                    end
+                                   
             end
         end
     end
@@ -129,43 +148,39 @@ module bram_interface_module (
         end
     end
     
-    //-----------------------------------------------------------------
-    // Kalibrovochnie vihodi (raspakovka 32-bitnih registrov)
-    // Format: [31:16] = Upad, [15:0] = Uotr
-    //-----------------------------------------------------------------
-    always @(posedge clk_i or posedge rst_i) begin
-        if (rst_i) begin
-            for (i = 0; i < 16; i = i + 1) begin
-                calib_u_pad[i] <= 16'd0;
-                calib_u_otr[i] <= 16'd0;
-            end
-        end else begin
-            for (i = 0; i < 16; i = i + 1) begin
-                calib_u_pad[i] <= reg_calib[i][31:16];
-                calib_u_otr[i] <= reg_calib[i][15:0];
-            end
-        end
-    end
+
+
+
     
     //-----------------------------------------------------------------
     // Genericia prerivania (po previsheniu porogov)
     //-----------------------------------------------------------------
-    reg threshold_prev;
-    always @(posedge clk_i or posedge rst_i) begin
-        if (rst_i) begin
-            axi_irq_o <= 1'b0;
-            threshold_prev <= 1'b0;
-        end else begin
-            threshold_prev <= threshold_exceeded;
-            
-            // Prerivanie po perednemu frontu threshold_exceeded (esli razresheno)
+    
+      reg threshold_prev;
+   
+
+
+always @(posedge clk_i or posedge rst_i) begin
+    if (rst_i) begin
+        axi_irq_o <= 1'b0;
+        threshold_prev <= 1'b0;
+    end else begin
+        threshold_prev <= threshold_exceeded;
+        if (!tx_active_i) begin
+            // Прерывание по переднему фронту threshold_exceeded (если разрешено)
             if (irq_enable && threshold_exceeded && !threshold_prev) begin
                 axi_irq_o <= 1'b1;
-            end else if (/* uslovie sbrosa prerivania - naprimer, chtenie statusnogo registra */) begin
+            end else begin
                 axi_irq_o <= 1'b0;
             end
+        end else begin
+            // Когда tx активен, сбрасываем прерывание (или можно сохранять, но обычно сбрасывают)
+            axi_irq_o <= 1'b0;
         end
     end
+end
+
+
     
     //-----------------------------------------------------------------
     // Vihodnie naznachenia
