@@ -6,14 +6,14 @@ module adc_pa(
     (* DONT_TOUCH = "yes" *) input [3:0] tx_mode_i, //Regim raboti peredatchika
     (* IOB = "TRUE" *) output reg adc_sck_o,
     (* IOB = "TRUE" *) output reg adc_conv_o,
-    //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch0,      // ������ ������ 0 (�������������� ���)
-    //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch1, 
+    //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch0,      // Rigistr dannih kanala 0 
+    //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch1,      // Rigistr dannih kanala 1 
     (* DONT_TOUCH = "yes" *)  output reg adc_conv_flag,
  
     input adc_sdo_i
 );
 
-// ������� ������� � IOB (������ ���� ����� ����� �����)
+// Vhodnoi registr IOB (Dolgen bit srazu posle vhoda)
 (* IOB = "TRUE" *) reg adc_sdo_ibuf;
 
 wire rst_i;
@@ -23,16 +23,16 @@ reg        data_ready;
 (* DONT_TOUCH = "yes" *) wire tx_active_rise;
 reg [3:0] adc_sck_counter;
 reg adc_sck_reg;
-(* DONT_TOUCH = "yes" *) reg adc_sck_reg_prev;  // ��� �������� ������ SCK
+(* DONT_TOUCH = "yes" *) reg adc_sck_reg_prev;  // Dla detekcii fronta SCK
 (* DONT_TOUCH = "yes" *) reg adc_conv_reg;
 
-(* DONT_TOUCH = "yes" *) reg [13:0] shift_reg_ch0;     // 14-������ ��������� ������� ��� ������ 0
-(* DONT_TOUCH = "yes" *) reg [13:0] shift_reg_ch1;     // 14-������ ��������� ������� ��� ������ 1
+(* DONT_TOUCH = "yes" *) reg [13:0] shift_reg_ch0;     // 14- bitnii sdvigaushii registr kanala 0
+(* DONT_TOUCH = "yes" *) reg [13:0] shift_reg_ch1;     // 14- bitnii sdvigaushii registr kanala 1
 (* DONT_TOUCH = "yes" *)  wire tx_active_o;
 (* DONT_TOUCH = "yes" *)  wire [3:0] tx_mode_i_fix;
 
-(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch0;      
-(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch1;
+(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch0;      // Rigistr dannih kanala 0 
+(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch1;      // Rigistr dannih kanala 1
 (* DONT_TOUCH = "yes" *)  wire [17:0] avg_ch0;
 (* DONT_TOUCH = "yes" *)  wire [17:0] avg_ch1;
 (* DONT_TOUCH = "yes" *)       wire avg_ready;
@@ -45,10 +45,10 @@ RES RES(
 (* DONT_TOUCH = "yes" *) pulse_stretcher pulse_stretcher(
     .clk(clk_120_i),          // 120 МГц
     .rst(rst_i),
-    (* DONT_TOUCH = "yes" *) .tx_active_i(tx_active_i), // короткий импульс (8 нс)
+    (* DONT_TOUCH = "yes" *) .tx_active_i(tx_active_i), // korotkii impuls (8 нс)
     (* DONT_TOUCH = "yes" *) .tx_mode_i(tx_mode_i),
     (* DONT_TOUCH = "yes" *) .tx_mode_i_fix(tx_mode_i_fix),
-    (* DONT_TOUCH = "yes" *) .tx_active_out(tx_active_o) // растянутый импульс (100 нс)
+    (* DONT_TOUCH = "yes" *) .tx_active_out(tx_active_o) // rastanutii impuls (100 нс)
 );
 
 
@@ -66,7 +66,7 @@ adc_averager adc_averager (
 
 
 // ============================================================================
-// ������ �������� ������� � �������� ��������
+// Logika delitela chastoti
 // ============================================================================
 always @(posedge clk_120_i or posedge rst_i) begin
     if(rst_i) begin
@@ -100,7 +100,7 @@ assign tx_active_rise = tx_active_ibuf && !tx_active_ibuf_prev;
 //assign  reg_ch1 = shift_reg_ch1;
 
 // ============================================================================
-// ������� ������� IOB (��������� always-���� ��� �������)
+// Vhodnoi registr IOB (Otdelnii always-blok)
 // ============================================================================
 always @(posedge clk_120_i or posedge rst_i) begin
     if(rst_i) begin
@@ -113,7 +113,7 @@ always @(posedge clk_120_i or posedge rst_i) begin
 end
 
 // ============================================================================
-// ������ �������� � ������� ���������
+// Rigistri
 // ============================================================================
 reg [16:0] delay_counter;
 reg [8:0]  measurement_counter;
@@ -127,25 +127,19 @@ reg [1:0] state;
 reg [4:0] samples_cnt;
 
 
-// �������� ��� ���������� ��������
+// Rigistri
 
-reg [5:0]  bit_counter;        // ������� ����� (0-31)
-reg        data_valid_ch0;     // ���� ���������� ������ 0
-reg        data_valid_ch1;     // ���� ���������� ������ 1
-//reg  [13:0] adc_data_ch0;       // ������ ������ 0 (�������������� ���)
-//reg  [13:0] adc_data_ch1;       // ������ ������ 1 (�������������� ���)
-       // ���� ���������� ����� ������
+reg [5:0]  bit_counter;        // Schetchik bit (0-31)
+reg        data_valid_ch0;     // Flag deistvitelnih dannih kanala 0
+reg        data_valid_ch1;     // Flag deistvitelnih dannih kanala 1
+
+       // Prisvaivaem znachenia dla state mashini
 localparam IDLE = 2'd0;
 localparam DELAY = 2'd1;
 localparam MEASURE = 2'd2;
 
 
-
-
-
-
-
-// Основной конечный автомат
+// Osnovnoi konecnii avtomat
 always @(posedge adc_sck_reg or posedge rst_i) begin
     if (rst_i) begin
         delay_counter       <= 17'd0;
@@ -159,11 +153,11 @@ always @(posedge adc_sck_reg or posedge rst_i) begin
     end else begin
         case (state)
             IDLE: begin
-                // Запуск по переднему фронту tx_active_o
+                // Zapusk po perednemu frontu tx_active_o
                 if (tx_active_o) begin
-                    samples_cnt   <= 5'd31;        // 32 цикла (31..0)
+                    samples_cnt   <= 5'd31;        // 32 cikla (31..0)
                     state         <= DELAY;
-                    delay_counter <= 17'd200;      // загрузка задержки
+                    delay_counter <= 17'd200;      // zagruzka zadergki
                 end
             end
 
@@ -172,7 +166,7 @@ always @(posedge adc_sck_reg or posedge rst_i) begin
                     delay_counter <= delay_counter - 1;
                     if (delay_counter == 1) begin
                         adc_conv_reg <= 1'b1; 
-                        adc_conv_flag <=1'b1;                // начало измерения
+                        adc_conv_flag <=1'b1;                // nachalo izmerenia
                         measurement_counter <= 9'd39;
                         state <= MEASURE;
                     end
@@ -189,9 +183,9 @@ always @(posedge adc_sck_reg or posedge rst_i) begin
                         if (samples_cnt != 0) begin
                             samples_cnt <= samples_cnt - 1;
                             state <= DELAY;
-                            delay_counter <= 17'd200;      // подготовка к следующему циклу
+                            delay_counter <= 17'd200;      // podgotovka k sledujuchemu ciklu izmerenii
                         end else begin
-                            state <= IDLE;                 // все 32 цикла выполнены
+                            state <= IDLE;                 // vse 32 cikla vipolneni
                         end
                     end
                 end
@@ -208,7 +202,7 @@ end
 
 
 // ============================================================================
-// ������������� �������� ������� (������ �� ����������������)
+// Sinhronizacia vhodnogo signala (Zachita ot metastabilnosti)
 // ============================================================================
 always @(posedge clk_120_i or posedge rst_i) begin
     if (rst_i) begin
@@ -223,13 +217,13 @@ end
 assign adc_sdo_sync = adc_sdo_sync_reg2;
 
 // ============================================================================
-// ��������� ������� ��� ����� ������ ���
+// Sdvigivii registr dla sbora dannih ACP
 // ============================================================================
-// ��������:
-// 1. ������� ����� ������� �� 0 �� 31 (32 ���� �� ����)
-// 2. ��� 0-13: ����� 0, ��� 14-27: ����� 1, ��� 28-31: �����
-// 3. ���� ���������� ����� 3-�� ����� SCK ����� CONV
-// 4. �� ��������� ������ SCK ����������� ��� � SDO
+// Algoritm:
+// 1. Schetchik bitov chitaet ot 0 do 31 (32 bita na kadr)
+// 2. Bit 2-15: kanal 0, bit 18-32: kanal 1
+// 3. Sbor nachinaetsa posle 3-go takta SCK posle CONV
+// 4. Po perednemu frontu SCK zaciklivaem bit s SDO
 // ============================================================================
 
 always @(posedge adc_sck_reg or posedge rst_i) begin
@@ -243,51 +237,50 @@ always @(posedge adc_sck_reg or posedge rst_i) begin
         adc_data_ch1    <= 14'd0;
         data_ready      <= 1'b0;
     end else begin
-        // ����� ����� ���������� ������ (�� ������� ������ 1 ����)
+        // Sbros flaga gotovnosti dannih (on activen tolko 1 takt)
         data_ready <= 1'b0;
       
         
-        // ���������, ��� �� � ������ ���������
+        // Proveraem, chto mi v regime izmerenia
         if (state == MEASURE) begin
-            // ����� �������� ����� SCK (adc_sck_reg �������� � 0 �� 1)
+            // Lovim perednii front SCK (adc_sck_reg menaetsa s 0 do 1)
             if (adc_sck_reg == 1'b1 && adc_sck_reg_prev == 1'b0) begin
                 
-                // ========== ������ ����� ����� ==========
-                // ��������� ������ ���� ����� (����� ���������)
+                // ========== Logika sbora bitov ==========
+                // Obrabotka pervih dvuh bitov (sbros registrov)
                 if (bit_counter < 6'd1) begin
-                    shift_reg_ch0 <= 14'd0;  // ����� �������� ������ 0
+                    shift_reg_ch0 <= 14'd0;  // Sbros registra kanala 0
                 end else if (bit_counter < 6'd17) begin
-                    // ��� ��� ������ 0 (���� 2-15)
+                    // Bit dla kanala 0 (Biti 2-15)
                     shift_reg_ch0 <= {shift_reg_ch0[12:0], adc_sdo_sync};
                 end else if (bit_counter < 6'd19) begin
-                    shift_reg_ch1 <= 14'd0;  // ����� �������� ������ 1
+                    shift_reg_ch1 <= 14'd0;  // Sbros registra kanala 1
                 end else if (bit_counter < 6'd33) begin
-                    // ��� ��� ������ 1 (���� 18-31)
+                    // Bit dla kanala 1 (bit 18-31)
                     shift_reg_ch1 <= {shift_reg_ch1[12:0], adc_sdo_sync};
                 end
-                // ���� 32-33 ���������� (�����)
                 
-                // ����������� ������� �����
+                // Uvelicivaem schetchik bitov
                 bit_counter <= bit_counter + 1'b1;
                 
-                // ========== �������� ���������� ������ ==========
-                // ����� ������� 14 ��� ��� ������ 0 (��� 15 - ��������� 14-� ���)
+                // ========== Proverka gotovnosti dannih ==========
+                // Kogda sobrali 14 bit dla kanala 0 (bit 15 - poslednii 14-i bit)
                 if (bit_counter == 6'd17) begin
                     data_valid_ch0 <= 1'b1;
                     adc_data_ch0 <= shift_reg_ch0;
                 end
                 
-                // ����� ������� 14 ��� ��� ������ 1 (��� 31 - ��������� 14-� ���)
+                // Kogda sobrali 14 bit dla kanala 1 (bit 31 - poslednii 14-i bit)
                 if (bit_counter == 6'd33) begin
                     data_valid_ch1 <= 1'b1;
                     adc_data_ch1 <= shift_reg_ch1;
                 end
                 
-                // ����� ������� ������ ���� (32 ����, ������� ������� �� 32)
+                // Kogda sobrali polnii kadr (32 bita, schetchik dohodit do 32)
                 if (bit_counter == 6'd34) begin
-                    // �������������, ��� ������ ������
+                    // Signaliziruem, chto dannie gotovi
                     data_ready <= 1'b1;
-                    // ���������� ������� ��� ���������� �����
+                    // Sbrasivaem schetchik dla sleduechego kadra
                     bit_counter <= 6'd0;
                     shift_reg_ch0 <= 14'd0;
                     shift_reg_ch1 <= 14'd0;
@@ -295,7 +288,7 @@ always @(posedge adc_sck_reg or posedge rst_i) begin
                 
             end  // if (adc_sck_reg == 1'b1 && adc_sck_reg_prev == 1'b0)
         end else begin
-            // ���� �� � ������ ���������, ���������� ��������
+            // Esli ne v regime izmerenia, sbrasivaem chetchik
             bit_counter <= 6'd0;
             data_valid_ch0 <= 1'b0;
             data_valid_ch1 <= 1'b0;
@@ -305,7 +298,7 @@ always @(posedge adc_sck_reg or posedge rst_i) begin
     end  // else (�� rst)
 end  // always
  //============================================================================
- //ILA (Integrated Logic Analyzer) - ������ ��� �������
+ //ILA (Integrated Logic Analyzer) - Tolko dla sinteza
  //============================================================================
 //`ifdef SYNTHESIS
 //    ila_0 ila_inst (
@@ -329,9 +322,3 @@ end  // always
 
 endmodule
 
-
-
-
-
-    
-//endmodule /* adc_pa */

@@ -115,7 +115,7 @@ module bram_interface_module (
                                 end
                             end else begin
                                 axi_data_o <= 32'd0;
-                                axi_vd_reg <= 1'b1;
+                                axi_vd_reg <= 1'b0;
                             end
                         end
                     endcase
@@ -156,10 +156,8 @@ module bram_interface_module (
     // Genericia prerivania (po previsheniu porogov)
     //-----------------------------------------------------------------
     
-      reg threshold_prev;
+reg threshold_prev;
    
-
-
 always @(posedge clk_i or posedge rst_i) begin
     if (rst_i) begin
         axi_irq_o <= 1'b0;

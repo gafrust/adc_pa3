@@ -21,7 +21,9 @@ reg  measurement_ready;   // flag gotovnosti rezultata
 
 reg threshold_exceeded;  // flag previshenia porogov ot modula izmerenii
 
-integer tx_mode_cnt;
+
+reg [31:0] data_zapis [15:0];
+integer i,j,tx_mode_cnt;
 
 
 
@@ -31,6 +33,7 @@ integer tx_mode_cnt;
 //Registri
 
 reg [7:0] adr_cnt;
+reg flag_prav;
 
 
 
@@ -85,77 +88,76 @@ initial begin
     axi_data_i <=32'd10000;
     
     adr_cnt <= 8'h0x08;
-
+    for(i = 0 ; i < 16; i = i + 1) begin
+     data_zapis [i] <= 32'd0;
+    end
+    j = 0;
     
     $display("=== Nachalo testa ===");
-    //$display("Testovie dannie: 0x%08X", test_data);
-
     // Zapisivaem dannie v kalibrovochnie registri
-
 for (adr_cnt = 8'h0x08; adr_cnt < 8'h0x48; adr_cnt = adr_cnt + 8'h0x04) begin
     @(posedge clk_120_i);
     axi_en <= 1;
     axi_we_i <= 1;
     axi_addr_i <= adr_cnt;
-    // Для адреса 0x08 (tx_mode=0) пишем 100, иначе 10000+adr_cnt
-    if (adr_cnt == 8'h0x2C)
-        axi_data_i <= 32'd100;
-    else
+    j = j +1;
+    data_zapis[j] <= {24'b0, adr_cnt}; // Pishem d dopolnitelnuju pamat dla proverki zapisi ichitivania
+    // Dla adresa 0x2C (tx_mode=9) pishem 100, inache 10000+adr_cnt
+    if (adr_cnt == 8'h0x2C) begin
+        axi_data_i <= 32'd3355443200; //Proverka prerivania dla Pramogo //32'd100; //Proverka prerivania dla otragonnogo
+        j = 9;
+        data_zapis[j] <= 32'd3355443200; // Pishem d dopolnitelnuju pamat dla proverki zapisi ichitivania
+        end
+    else begin
         axi_data_i <= 32'd10000 + adr_cnt;
+        end
+        end
     @(posedge clk_120_i);
     axi_en <= 0;
     axi_we_i <= 0;
+
+    
+
+
+// Vivod dannih zapisannih v tehnologich pamat
+for (j = 0; j <16; j = j+1) begin
+$display("data_zapis=%0d, j = %0d", data_zapis[j], j);
 end
+  
+
+ // Chitivaem dannie iz kalibrovochnih registrov i sravnivaem c pamatiu
+ j = 0; 
+for (adr_cnt = 8'h0x08; adr_cnt < 8'h0x48; adr_cnt = adr_cnt + 8'h0x04) begin
+    @(posedge clk_120_i);
+    axi_en <= 1;
+    axi_we_i <= 0;
+    axi_addr_i <= adr_cnt;
+    j = j +1;
+    flag_prav <= data_zapis[j] && axi_addr_i;
+    $display("flag_prav=%0d, j = %0d", flag_prav, j);
+    @(posedge clk_120_i);
+    axi_en <= 0;
+    axi_we_i <= 0;
+    end
 
 
 
-    // for (adr_cnt = 8'h0x08; adr_cnt <8'h0x48; adr_cnt = adr_cnt + 8'h0x04) begin
-    //     @(posedge clk_120_i);
-    //     axi_en<=1;
-    //     axi_we_i <= 1;
-    //     axi_addr_i <= adr_cnt;
-    //     axi_data_i <=32'd10000+adr_cnt;
-    //     @(posedge clk_120_i);
-    //     axi_en <=0;
-    //     axi_we_i <= 0;
-    //     //$display("adr_cnt = %0d ", adr_cnt);
-    // end
- #10
-// for (adr_cnt = 8'h0x08; adr_cnt <8'h0x48; adr_cnt = adr_cnt + 8'h0x04) begin
-//         @(posedge clk_120_i);
-//         axi_en<=1;
-//         axi_we_i <= 0;
-//         axi_addr_i <= adr_cnt;
-//         axi_data_o <=32'd10000+adr_cnt;
-//         measurement_ready <= 1; 
-//         measurement_result <= 32'd9992+adr_cnt;
-// // Держим сигналы ещё 2 такта
-//        // @(posedge clk_120_i);
-//       //  @(posedge clk_120_i);
-
-//         @(posedge clk_120_i);
-//         axi_en <=0;
-//         axi_we_i <= 0;
-//         measurement_ready <= 0; 
-//        // $display("  bit %2d: %d", bit_cnt, adc_sdo_i);
-//         $display("adr_cnt = %0d ", adr_cnt);
-//     end
 
 
-// Во втором цикле (имитация измерений)
+// Vo vtorom cicle (imitacia izmerenii)
 for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
     #100;
     @(posedge clk_120_i);
     axi_en <= 1;
     axi_we_i <= 1;
     axi_addr_i <= 0;
-    axi_data_i <= 32'd2;          // возможно, управляющий регистр
+    axi_data_i <= 32'd2;          // razreshenie prezivanii (irq_enable)
     tx_active_i <= 1;
     tx_mode <= tx_mode_cnt;
     measurement_ready <= 1;
-    // Для tx_mode=0 результат 200, для остальных 9992+...
+    // Dla tx_mode=9 rezultat 200, dla ostalnih 9992+...
     if (tx_mode_cnt == 9)
-        measurement_result <= 32'd200;
+        measurement_result <= 32'd1677721600; //Proverka prerivania dla Pramogo //32'd200; //Proverka prerivania dla otragonnogo
     else
         measurement_result <= 32'd9992 + tx_mode_cnt;
     @(posedge clk_120_i);
@@ -164,60 +166,13 @@ for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
     axi_we_i <= 0;
     measurement_ready <= 0;
     
-    // Ждём такт, чтобы прерывание успело выставиться (см. ниже)
+    // Gdem takt, chtobi prerivanie uspelo vistavitsa 
     @(posedge clk_120_i);
     $display("tx_mode=%0d, axi_irq_o = %0d", tx_mode_cnt, axi_irq_o);
 end
 
 
-//    for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
 
-// #100
-//  @(posedge clk_120_i);
-//        axi_en<=1;
-//         axi_we_i <= 1;
-//         axi_addr_i <= 0;
-//         axi_data_i <=32'd2;
-//         tx_active_i <=1;
-//         tx_mode <= tx_mode_cnt;
-//         measurement_ready <= 1; 
-//         measurement_result <= 32'd9992+tx_mode_cnt;
-//         $display("axi_irq_o = %0d ", axi_irq_o);
-// #10
-//  @(posedge clk_120_i);
-//   tx_active_i <=0;
-//   axi_en<=0;
-//   axi_we_i <= 0;
-//   measurement_ready <= 0; 
-//   end 
-
- 
-   // $display("CONV Obnarugen na vremeni %0t ms", $time);
-    
-   
-  
-
-
-//$display(" sr_sum_ch0 0x%0D, sr_sum_ch1 0x%0D", sr_sum_ch0,sr_sum_ch1);
-
-//@(posedge uut.adc_pa.avg_ready) 
-//$display(" uut.adc_pa.adc_averager.avg_ch0 0x%0D, uut.adc_pa.adc_averager.avg_ch1 0x%0D", uut.adc_pa.adc_averager.avg_ch0,uut.adc_pa.adc_averager.avg_ch1);
-
-//if(uut.adc_pa.adc_averager.avg_ch0==sr_sum_ch0 && uut.adc_pa.adc_averager.avg_ch1==sr_sum_ch1)begin
-//$display(" usrednenie pravilnoe");
-//end
-    // # 20
-    // tx_active_i = 1'b1;
-    // $display("tx_active_i =1 na vremeni %0t ms", $time);
-    // #10
-    // tx_active_i = 1'b0;
-    
-  
-    // # 20
-    // tx_active_i = 1'b1;
-    // $display("tx_active_i =1 na vremeni %0t ms", $time);
-    // #10
-    // tx_active_i = 1'b0;
     
     
     $display("=== Peredicha zavershena ===");
