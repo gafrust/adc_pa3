@@ -1,24 +1,24 @@
 module bram_interface_module (
     input  wire        clk_i,          // 120 МГц
     input  wire        rst_i,
-    input wire   tx_active_i,
-    input wire [3:0] tx_mode,
+   (* DONT_TOUCH = "yes" *) input wire   tx_active_i,
+   (* DONT_TOUCH = "yes" *) input wire [3:0] tx_mode,
     
     // AXI BRAM interface 
-    input  wire        axi_en_i,       // strob deistvitelnih dannih
-    input  wire [31:0] axi_data_i,     // vhodnie dannie
-    input  wire        axi_we_i,       // 1-zapis, 0-chtenie
-    input  wire [31:0] axi_addr_i,     // adress
-    output wire        axi_vd_o,       // strob vihodnih dannih
-    output reg  [31:0] axi_data_o,     // vihodnie dannie
-    output reg         axi_irq_o,      // prerivanie (previshenie porogov)
+   (* DONT_TOUCH = "yes" *) input  wire        axi_en_i,       // strob deistvitelnih dannih
+   (* DONT_TOUCH = "yes" *) input  wire [31:0] axi_data_i,     // vhodnie dannie
+   (* DONT_TOUCH = "yes" *) input  wire        axi_we_i,       // 1-zapis, 0-chtenie
+   (* DONT_TOUCH = "yes" *) input  wire [31:0] axi_addr_i,     // adress
+  (* DONT_TOUCH = "yes" *)  output wire        axi_vd_o,       // strob vihodnih dannih
+  (* DONT_TOUCH = "yes" *)  output reg  [31:0] axi_data_o,     // vihodnie dannie
+  (* DONT_TOUCH = "yes" *)  output reg         axi_irq_o,      // prerivanie (previshenie porogov)
     
     // Signali polzovatelskoi logiki
-    output reg         module_enable,  // bit [0] razreshenie raboti
-    output reg         irq_enable,     // bit [1] razreshenie prerivania
+   (* DONT_TOUCH = "yes" *) output reg         module_enable,  // bit [0] razreshenie raboti
+   (* DONT_TOUCH = "yes" *) output reg         irq_enable,     // bit [1] razreshenie prerivania
     
-    input  wire [31:0] measurement_result,  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
-    input  wire        measurement_ready  // flag gotovnosti rezultata
+   (* DONT_TOUCH = "yes" *) input  wire [31:0] measurement_result,  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
+   (* DONT_TOUCH = "yes" *) input  wire        measurement_ready  // flag gotovnosti rezultata
     
     //output wire [15:0] calib_u_pad_o,   // kalibrovochnie Upad
     //output wire [15:0] calib_u_otr_o,   // kalibrovochnie Uotr
@@ -36,18 +36,18 @@ module bram_interface_module (
     //-----------------------------------------------------------------
     // Vnutrennie registri (32-bitnie)
     //-----------------------------------------------------------------
-    reg [31:0] reg_ctrl;           // 0x00
-    reg [31:0] reg_result;         // 0x04
-    reg [31:0] reg_calib [0:15];   // 0x08...0x48
+  (* DONT_TOUCH = "yes" *)  reg [31:0] reg_ctrl;           // 0x00
+   (* DONT_TOUCH = "yes" *) reg [31:0] reg_result;         // 0x04
+   (* DONT_TOUCH = "yes" *) reg [31:0] reg_calib [0:15];   // 0x08...0x48
 
-  reg [15:0] calib_u_pad;  // kalibrovochnie Upad
-  reg [15:0] calib_u_otr;   // kalibrovochnie Uotr
+ (* DONT_TOUCH = "yes" *) reg [15:0] calib_u_pad;  // kalibrovochnie Upad
+ (* DONT_TOUCH = "yes" *) reg [15:0] calib_u_otr;   // kalibrovochnie Uotr
 
-  reg threshold_exceeded; //flag previshenia porogov ot modula izmerenii
+  (* DONT_TOUCH = "yes" *)reg threshold_exceeded; //flag previshenia porogov ot modula izmerenii
 
     
-    reg        axi_vd_reg;         // vnutrennii signal validnosti dannih
-    integer i;
+  (* DONT_TOUCH = "yes" *)  reg        axi_vd_reg;         // vnutrennii signal validnosti dannih
+  (* DONT_TOUCH = "yes" *)  integer i;
 
     
     
@@ -126,12 +126,14 @@ module bram_interface_module (
             if (measurement_ready) begin
                 reg_result <= measurement_result;
                 if ((measurement_result[31:16] < reg_calib[tx_mode][31:16]) ||
-                                   (reg_calib[tx_mode][15:0] < measurement_result[15:0]))
-                                   begin 
+                                   (reg_calib[tx_mode][15:0] < measurement_result[15:0])) begin
                                     axi_irq_o <= 1'b1;
                                     end
-                                   
-            end
+                                   end else if (!tx_active_i) begin
+                                    // Сбрасываем прерывание, когда передача не активна
+                                   axi_irq_o <= 1'b0;
+                                   end
+            
         end
     end
     
@@ -156,27 +158,27 @@ module bram_interface_module (
     // Genericia prerivania (po previsheniu porogov)
     //-----------------------------------------------------------------
     
-reg threshold_prev;
+(* DONT_TOUCH = "yes" *)reg threshold_prev;
    
-always @(posedge clk_i or posedge rst_i) begin
-    if (rst_i) begin
-        axi_irq_o <= 1'b0;
-        threshold_prev <= 1'b0;
-    end else begin
-        threshold_prev <= threshold_exceeded;
-        if (!tx_active_i) begin
-            // Прерывание по переднему фронту threshold_exceeded (если разрешено)
-            if (irq_enable && threshold_exceeded && !threshold_prev) begin
-                axi_irq_o <= 1'b1;
-            end else begin
-                axi_irq_o <= 1'b0;
-            end
-        end else begin
-            // Когда tx активен, сбрасываем прерывание (или можно сохранять, но обычно сбрасывают)
-            axi_irq_o <= 1'b0;
-        end
-    end
-end
+// always @(posedge clk_i or posedge rst_i) begin
+//     if (rst_i) begin
+//         axi_irq_o <= 1'b0;
+//         threshold_prev <= 1'b0;
+//     end else begin
+//         threshold_prev <= threshold_exceeded;
+//         if (!tx_active_i) begin
+//             // Прерывание по переднему фронту threshold_exceeded (если разрешено)
+//             if (irq_enable && threshold_exceeded && !threshold_prev) begin
+//                 axi_irq_o <= 1'b1;
+//             end else begin
+//                 axi_irq_o <= 1'b0;
+//             end
+//         end else begin
+//             // Когда tx активен, сбрасываем прерывание (или можно сохранять, но обычно сбрасывают)
+//             axi_irq_o <= 1'b0;
+//         end
+//     end
+// end
 
 
     
