@@ -9,7 +9,7 @@ module pulse_stretcher (
 
     // Длительность 100 нс при 120 МГц = ceil(100 / 8.333) ≈ 12 тактов
     localparam WIDTH_CYCLES = 12;  
-    reg [6:0] counter;      // 4 бита хватит (0..15)
+    reg [3:0] counter;      // 4 бита хватит (0..15)
     reg in_sync, in_prev;
     //reg  [3:0 ] tx_mode_i_fix,
     wire in_rising;
@@ -38,7 +38,7 @@ module pulse_stretcher (
                 tx_mode_i_fix <= tx_mode_i;
                 counter <= WIDTH_CYCLES - 1; // загружаем счётчик
             end else if (tx_active_out) begin
-                if (counter == 6'd0)
+                if (counter == 4'd0)
                     tx_active_out <= 1'b0;
                 else
                     counter <= counter - 1'b1;

@@ -4,18 +4,28 @@ module adc_pa(
     input clk_120_i,
     (* DONT_TOUCH = "yes" *) input tx_active_i,
     (* DONT_TOUCH = "yes" *) input [3:0] tx_mode_i, //Regim raboti peredatchika
-    (* IOB = "TRUE" *) output reg adc_sck_o,
-    (* IOB = "TRUE" *) output reg adc_conv_o,
+                             input adc_sdo_i,
+    // AXI BRAM interface 
+    (* DONT_TOUCH = "yes" *) input  wire        axi_en_i,       // strob deistvitelnih dannih
+    (* DONT_TOUCH = "yes" *) input  wire [31:0] axi_data_i,     // vhodnie dannie
+    (* DONT_TOUCH = "yes" *) input  wire        axi_we_i,       // 1-zapis, 0-chtenie
+    (* DONT_TOUCH = "yes" *) input  wire [31:0] axi_addr_i,     // adress
+   (* DONT_TOUCH = "yes" *)  output wire        axi_vd_o,       // strob vihodnih dannih
+   (* DONT_TOUCH = "yes" *)  output wire  [31:0] axi_data_o,     // vihodnie dannie
+   (* DONT_TOUCH = "yes" *)  output wire         axi_irq_o,      // prerivanie (previshenie porogov)
+          (* IOB = "TRUE" *) output reg adc_sck_o,
+          (* IOB = "TRUE" *) output reg adc_conv_o,
     //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch0,      // Rigistr dannih kanala 0 
     //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch1,      // Rigistr dannih kanala 1 
-    (* DONT_TOUCH = "yes" *)  output reg adc_conv_flag,
- 
-    input adc_sdo_i
+   (* DONT_TOUCH = "yes" *)  output reg adc_conv_flag
+
 );
 
 // Vhodnoi registr IOB (Dolgen bit srazu posle vhoda)
 (* IOB = "TRUE" *) reg adc_sdo_ibuf;
 
+
+// Signali polzovatelskoi logiki
 wire rst_i;
 reg tx_active_ibuf;
 reg        data_ready;  
@@ -36,11 +46,44 @@ reg adc_sck_reg;
 (* DONT_TOUCH = "yes" *)  wire [17:0] avg_ch0;
 (* DONT_TOUCH = "yes" *)  wire [17:0] avg_ch1;
 (* DONT_TOUCH = "yes" *)       wire avg_ready;
+(* DONT_TOUCH = "yes" *)  wire        module_enable; // bit [0] razreshenie raboti
+(* DONT_TOUCH = "yes" *)  wire         irq_enable;     // bit [1] razreshenie prerivania
+(* DONT_TOUCH = "yes" *)  wire [31:0] measurement_result;  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
+(* DONT_TOUCH = "yes" *)  wire        measurement_ready;  // flag gotovnosti rezultata
+
 
 RES RES(
     .clk(clk_120_i),
     .rst(rst_i)
 );
+
+
+
+
+
+
+ bram_interface_module bram_interface_module(
+    .clk_i(clk_120_i),          // 120 МГц
+    .rst_i(rst_i),
+    .tx_active_i(tx_active_i),
+    .tx_mode(tx_mode_i),
+// AXI BRAM interface 
+    .axi_en_i(axi_en_i),       // strob deistvitelnih dannih
+    .axi_data_i(axi_data_i),     // vhodnie dannie
+    .axi_we_i(axi_we_i),       // 1-zapis, 0-chtenie
+    .axi_addr_i(axi_addr_i),     // adress
+    .axi_vd_o(axi_vd_o),       // strob vihodnih dannih
+    .axi_data_o(axi_data_o),     // vihodnie dannie
+    .axi_irq_o(axi_irq_o),      // prerivanie (previshenie porogov)
+// Signali polzovatelskoi logiki
+    .module_enable(module_enable),  // bit [0] razreshenie raboti
+    .irq_enable(irq_enable),     // bit [1] razreshenie prerivania
+    .measurement_result({avg_ch1[13:0],avg_ch0[13:0]}),  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
+    .measurement_ready(avg_ready)  // flag gotovnosti rezultata
+);
+
+
+
 
 (* DONT_TOUCH = "yes" *) pulse_stretcher pulse_stretcher(
     .clk(clk_120_i),          // 120 МГц

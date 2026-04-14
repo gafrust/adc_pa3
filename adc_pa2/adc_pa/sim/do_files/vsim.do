@@ -33,8 +33,8 @@ set path_icnl2   ../verilog
 
 # -------------------- Компиляция исходных файлов --------------------
 # Компилируем тестбенч tb_adc_pa.v (SystemVerilog)
-#vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/tb_adc_pa.v
-vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/tb_bram_interface_module.v
+vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/tb_adc_pa.v
+#vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/tb_bram_interface_module.v
 
 # Компилируем файл конфигурации ukl_nano_def_cfg.v (обычно параметры, дефайны)
 #vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/ukl_nano_def_cfg.v
@@ -42,10 +42,10 @@ vlog  +incdir+$path_icnl  -reportprogress 300 -work work ../verilog/tb_bram_inte
 # Компилируем основной RTL-модуль adc_pa.v
 # +define+__XILINX_SIMULATOR__ – определяет макрос, часто используемый в коде Xilinx
 # +incdir+$path_icnl2 +incdir+$path_icnl – добавляем два каталога для поиска include-файлов
-#vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/adc_pa.v
-#vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/RES.v
-#vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/pulse_stretcher.v
-#vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/averager.v
+vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/adc_pa.v
+vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/RES.v
+vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/pulse_stretcher.v
+vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/averager.v
 vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -reportprogress 300 -work work ../../rtl/bram_interface_module.v
 
 
@@ -64,7 +64,7 @@ vlog  +define+__XILINX_SIMULATOR__ +incdir+$path_icnl2 +incdir+$path_icnl  -repo
 #vsim -voptargs=+acc=lprn -L unisims_ver -L secureip -L xpm -t 100pS work.tb_adc_pa
 
 
-vsim -voptargs=+acc=lprn -L /home/rgafurov/work/Praktika_FPGA/Rustem_Gafurov/Radiocomp/Xilinx23_2/adc_pa_pravino_pokaz_ila_/adc_pa/adc_pa/questa_libs/unisims_ver -L /home/rgafurov/work/Praktika_FPGA/Rustem_Gafurov/Radiocomp/Xilinx23_2/adc_pa_pravino_pokaz_ila_/adc_pa/adc_pa/questa_libs/secureip -L /home/rgafurov/work/Praktika_FPGA/Rustem_Gafurov/Radiocomp/Xilinx23_2/adc_pa_pravino_pokaz_ila_/adc_pa/adc_pa/questa_libs/xpm -t 100pS work.tb_bram_interface_module glbl
+vsim -voptargs=+acc=lprn -L /home/rgafurov/work/Praktika_FPGA/Rustem_Gafurov/Radiocomp/Xilinx23_2/adc_pa_pravino_pokaz_ila_/adc_pa/adc_pa/questa_libs/unisims_ver -L /home/rgafurov/work/Praktika_FPGA/Rustem_Gafurov/Radiocomp/Xilinx23_2/adc_pa_pravino_pokaz_ila_/adc_pa/adc_pa/questa_libs/secureip -L /home/rgafurov/work/Praktika_FPGA/Rustem_Gafurov/Radiocomp/Xilinx23_2/adc_pa_pravino_pokaz_ila_/adc_pa/adc_pa/questa_libs/xpm -t 100pS work.tb_adc_pa glbl
 
 
 # -------------------- Открытие окон отладки --------------------
@@ -78,9 +78,9 @@ view signals
 # -------------------- Загрузка настроек волн --------------------
 # Выполняем файл команд vsim_1_wave.do, который обычно содержит
 # команды для добавления сигналов в окно волн и настройки отображения
-do vsim_2_wave.do
+do vsim_3_wave.do
 
 # -------------------- Запуск симуляции --------------------
 # Запускаем симуляцию на 3500 микросекунд модельного времени
-run 10 us
+run 4000 us
 

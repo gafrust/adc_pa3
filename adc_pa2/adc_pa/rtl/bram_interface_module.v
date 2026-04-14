@@ -17,7 +17,7 @@ module bram_interface_module (
    (* DONT_TOUCH = "yes" *) output reg         module_enable,  // bit [0] razreshenie raboti
    (* DONT_TOUCH = "yes" *) output reg         irq_enable,     // bit [1] razreshenie prerivania
     
-   (* DONT_TOUCH = "yes" *) input  wire [31:0] measurement_result,  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
+   (* DONT_TOUCH = "yes" *) input  wire [31:0] measurement_result,  // rezultat izmerenia (Upad[31:16], Uotr[15:0])
    (* DONT_TOUCH = "yes" *) input  wire        measurement_ready  // flag gotovnosti rezultata
     
     //output wire [15:0] calib_u_pad_o,   // kalibrovochnie Upad
