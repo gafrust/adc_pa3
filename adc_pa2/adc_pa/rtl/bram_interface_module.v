@@ -31,23 +31,23 @@ module bram_interface_module (
     //-----------------------------------------------------------------
     localparam ADDR_CTRL        = 8'h00;   // 0x00 - upravlenie
     localparam ADDR_RESULT      = 8'h04;   // 0x04 - rezultat izmerenia
-    localparam ADDR_CALIB_BASE  = 8'h07;   // 0x08 - nachalo kalibrovochnih registrov
-    localparam ADDR_CALIB_REG0  = 8'h08;
-    localparam ADDR_CALIB_REG1  = 8'h0C;
-    localparam ADDR_CALIB_REG2  = 8'h10;
-    localparam ADDR_CALIB_REG3  = 8'h14;
-    localparam ADDR_CALIB_REG4  = 8'h18;
-    localparam ADDR_CALIB_REG5  = 8'h1C;
-    localparam ADDR_CALIB_REG6  = 8'h20;
-    localparam ADDR_CALIB_REG7  = 8'h24;
-    localparam ADDR_CALIB_REG8  = 8'h28;
-    localparam ADDR_CALIB_REG9  = 8'h2C;
-    localparam ADDR_CALIB_REG10  = 8'h30;
-    localparam ADDR_CALIB_REG11  = 8'h34;
-    localparam ADDR_CALIB_REG12  = 8'h38;
-    localparam ADDR_CALIB_REG13  = 8'h3C;
-    localparam ADDR_CALIB_REG14  = 8'h40;
-    localparam ADDR_CALIB_REG15  = 8'h44;
+    localparam ADDR_CALIB_BASE  = 8'h08;   // 0x08 - nachalo kalibrovochnih registrov
+    // localparam ADDR_CALIB_REG0  = 8'h08;
+    // localparam ADDR_CALIB_REG1  = 8'h0C;
+    // localparam ADDR_CALIB_REG2  = 8'h10;
+    // localparam ADDR_CALIB_REG3  = 8'h14;
+    // localparam ADDR_CALIB_REG4  = 8'h18;
+    // localparam ADDR_CALIB_REG5  = 8'h1C;
+    // localparam ADDR_CALIB_REG6  = 8'h20;
+    // localparam ADDR_CALIB_REG7  = 8'h24;
+    // localparam ADDR_CALIB_REG8  = 8'h28;
+    // localparam ADDR_CALIB_REG9  = 8'h2C;
+    // localparam ADDR_CALIB_REG10  = 8'h30;
+    // localparam ADDR_CALIB_REG11  = 8'h34;
+    // localparam ADDR_CALIB_REG12  = 8'h38;
+    // localparam ADDR_CALIB_REG13  = 8'h3C;
+    // localparam ADDR_CALIB_REG14  = 8'h40;
+    // localparam ADDR_CALIB_REG15  = 8'h44;
     
     //-----------------------------------------------------------------
     // Vnutrennie registri (32-bitnie)
@@ -94,70 +94,70 @@ module bram_interface_module (
                         ADDR_CTRL: begin
                             reg_ctrl <= axi_data_i;  // zapis vsego 32-bitnogo slova
                         end
-                        ADDR_CALIB_REG0: begin
-                          reg_calib[0] <= axi_data_i;
-                        end 
-                        ADDR_CALIB_REG1:begin
-                          reg_calib[1] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG2:begin
-                          reg_calib[2] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG3:begin
-                          reg_calib[3] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG4:begin
-                          reg_calib[4] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG5:begin
-                          reg_calib[5] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG6:begin
-                          reg_calib[6] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG7:begin
-                          reg_calib[7] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG8:begin
-                          reg_calib[8] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG9:begin
-                          reg_calib[9] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG10:begin
-                          reg_calib[10] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG11:begin
-                          reg_calib[11] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG12:begin
-                          reg_calib[12] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG13:begin
-                          reg_calib[13] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG14:begin
-                          reg_calib[14] <= axi_data_i;
-                        end
-                        ADDR_CALIB_REG15:begin
-                          reg_calib[15] <= axi_data_i;
-                        end
+                        // ADDR_CALIB_REG0: begin
+                        //   reg_calib[0] <= axi_data_i;
+                        // end 
+                        // ADDR_CALIB_REG1:begin
+                        //   reg_calib[1] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG2:begin
+                        //   reg_calib[2] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG3:begin
+                        //   reg_calib[3] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG4:begin
+                        //   reg_calib[4] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG5:begin
+                        //   reg_calib[5] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG6:begin
+                        //   reg_calib[6] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG7:begin
+                        //   reg_calib[7] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG8:begin
+                        //   reg_calib[8] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG9:begin
+                        //   reg_calib[9] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG10:begin
+                        //   reg_calib[10] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG11:begin
+                        //   reg_calib[11] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG12:begin
+                        //   reg_calib[12] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG13:begin
+                        //   reg_calib[13] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG14:begin
+                        //   reg_calib[14] <= axi_data_i;
+                        // end
+                        // ADDR_CALIB_REG15:begin
+                        //   reg_calib[15] <= axi_data_i;
+                        // end
     
 
 
 
 
                         
-                        // default: begin
-                        //     // Kalibrovochnie znachenia (0x08 ... 0x24)
-                        //     if (axi_addr_i[7:0] >= ADDR_CALIB_BASE && 
-                        //         axi_addr_i[7:0] <= ADDR_CALIB_BASE + 16*4 - 1) begin
-                        //         i = (axi_addr_i[7:0] - ADDR_CALIB_BASE) / 4;
-                        //         if (i >= 0 && i < 16) begin
-                        //             reg_calib[i] <= axi_data_i;
-                        //         end
-                        //     end
-                        // end
+                        default: begin
+                            // Kalibrovochnie znachenia (0x08 ... 0x24)
+                            if (axi_addr_i[7:0] >= ADDR_CALIB_BASE && 
+                                axi_addr_i[7:0] <= ADDR_CALIB_BASE + 16*4 - 1) begin
+                                i = (axi_addr_i[7:0] - ADDR_CALIB_BASE) / 4;
+                                if (i >= 0 && i < 16) begin
+                                    reg_calib[i] <= axi_data_i;
+                                end
+                            end
+                        end
                     endcase
                     
                 end else begin
@@ -172,84 +172,84 @@ module bram_interface_module (
                             axi_data_o <= reg_result;
                             axi_vd_reg <= 1'b1;
                         end
-                        ADDR_CALIB_REG0: begin
-                          axi_data_o <= reg_calib[0];
-                          axi_vd_reg <= 1'b1;
-                        end 
-                        ADDR_CALIB_REG1:begin
-                          axi_data_o <= reg_calib[1];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG2:begin
-                          axi_data_o <= reg_calib[2];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG3:begin
-                          axi_data_o <= reg_calib[3];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG4:begin
-                          axi_data_o <= reg_calib[4];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG5:begin
-                          axi_data_o <= reg_calib[5];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG6:begin
-                          axi_data_o <= reg_calib[6];
-                          axi_vd_reg <= 1'b1;
-                          end
-                        ADDR_CALIB_REG7:begin
-                          axi_data_o <= reg_calib[7];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG8:begin
-                          axi_data_o <= reg_calib[8];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG9:begin
-                          axi_data_o <= reg_calib[9];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG10:begin
-                          axi_data_o <= reg_calib[10];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG11:begin
-                          axi_data_o <= reg_calib[11];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG12:begin
-                          axi_data_o <= reg_calib[12];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG13:begin
-                          axi_data_o <= reg_calib[13];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG14:begin
-                          axi_data_o <= reg_calib[14];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        ADDR_CALIB_REG15:begin
-                          axi_data_o <= reg_calib[15];
-                          axi_vd_reg <= 1'b1;
-                        end
-                        // default: begin
-                        //     // Chtenie kalibrovochnih registrov
-                        //     if (axi_addr_i[7:0] >= ADDR_CALIB_BASE && 
-                        //         axi_addr_i[7:0] <= ADDR_CALIB_BASE + 16*4 - 1) begin
-                        //         i = (axi_addr_i[7:0] - ADDR_CALIB_BASE) / 4;
-                        //         if (i >= 0 && i < 16) begin
-                        //             axi_data_o <= reg_calib[i];
-                        //             axi_vd_reg <= 1'b1;
-                        //         end
-                        //     end else begin
-                        //         axi_data_o <= 32'd0;
-                        //         axi_vd_reg <= 1'b0;
-                        //     end
+                        // ADDR_CALIB_REG0: begin
+                        //   axi_data_o <= reg_calib[0];
+                        //   axi_vd_reg <= 1'b1;
+                        // end 
+                        // ADDR_CALIB_REG1:begin
+                        //   axi_data_o <= reg_calib[1];
+                        //   axi_vd_reg <= 1'b1;
                         // end
+                        // ADDR_CALIB_REG2:begin
+                        //   axi_data_o <= reg_calib[2];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG3:begin
+                        //   axi_data_o <= reg_calib[3];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG4:begin
+                        //   axi_data_o <= reg_calib[4];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG5:begin
+                        //   axi_data_o <= reg_calib[5];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG6:begin
+                        //   axi_data_o <= reg_calib[6];
+                        //   axi_vd_reg <= 1'b1;
+                        //   end
+                        // ADDR_CALIB_REG7:begin
+                        //   axi_data_o <= reg_calib[7];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG8:begin
+                        //   axi_data_o <= reg_calib[8];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG9:begin
+                        //   axi_data_o <= reg_calib[9];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG10:begin
+                        //   axi_data_o <= reg_calib[10];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG11:begin
+                        //   axi_data_o <= reg_calib[11];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG12:begin
+                        //   axi_data_o <= reg_calib[12];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG13:begin
+                        //   axi_data_o <= reg_calib[13];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG14:begin
+                        //   axi_data_o <= reg_calib[14];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        // ADDR_CALIB_REG15:begin
+                        //   axi_data_o <= reg_calib[15];
+                        //   axi_vd_reg <= 1'b1;
+                        // end
+                        default: begin
+                            // Chtenie kalibrovochnih registrov
+                            if (axi_addr_i[7:0] >= ADDR_CALIB_BASE && 
+                                axi_addr_i[7:0] <= ADDR_CALIB_BASE + 16*4 - 1) begin
+                                i = (axi_addr_i[7:0] - ADDR_CALIB_BASE) / 4;
+                                if (i >= 0 && i < 16) begin
+                                    axi_data_o <= reg_calib[i];
+                                    axi_vd_reg <= 1'b1;
+                                end
+                            end else begin
+                                axi_data_o <= 32'd0;
+                                axi_vd_reg <= 1'b0;
+                            end
+                        end
                     endcase
                 end
             end
