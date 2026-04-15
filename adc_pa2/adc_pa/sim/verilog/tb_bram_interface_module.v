@@ -34,6 +34,7 @@ integer i,j,tx_mode_cnt;
 
 reg [7:0] adr_cnt;
 reg flag_prav;
+reg [31:0] chit;
 
 
 
@@ -92,6 +93,8 @@ initial begin
      data_zapis [i] <= 32'd0;
     end
     j = 0;
+
+    chit <= 0;
     
     $display("=== Nachalo testa ===");
     // Zapisivaem dannie v kalibrovochnie registri
@@ -171,7 +174,28 @@ for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
     $display("tx_mode=%0d, axi_irq_o = %0d", tx_mode_cnt, axi_irq_o);
 end
 
-
+    @(posedge clk_120_i);
+    axi_en <= 1;      
+    axi_we_i <= 1;
+    axi_addr_i <= 32'h0;
+    @(posedge clk_120_i);
+    axi_data_i <=32'h1;
+    @(posedge clk_120_i);
+    @(posedge clk_120_i);
+    axi_en <= 0; 
+    @(posedge clk_120_i);
+    @(posedge clk_120_i);
+    axi_en <= 1;      
+    axi_we_i <= 0;
+    axi_addr_i <= 32'h0;
+    @(posedge clk_120_i);
+    @(posedge clk_120_i);
+    @(posedge clk_120_i);
+    chit <= axi_data_o;
+    @(posedge clk_120_i);
+    axi_en <= 0;
+    @(posedge clk_120_i);
+    $display("chit=%0d", chit);
 
     
     

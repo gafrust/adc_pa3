@@ -23,6 +23,7 @@ add wave -noupdate /tb_bram_interface_module/measurement_ready;
 add wave -noupdate /tb_bram_interface_module/measurement_result;
 add wave -noupdate /tb_bram_interface_module/tx_mode_cnt;
 add wave -noupdate /tb_bram_interface_module/adr_cnt;
+add wave -noupdate /tb_bram_interface_module/chit;
 
 
 
@@ -42,6 +43,7 @@ add wave -noupdate /tb_bram_interface_module/uut/reg_result;
 add wave -noupdate /tb_bram_interface_module/uut/irq_enable;
 add wave -noupdate /tb_bram_interface_module/uut/threshold_exceeded;
 add wave -noupdate /tb_bram_interface_module/uut/threshold_prev;
+add wave -noupdate /tb_bram_interface_module/uut/reg_ctrl;
 
   
 
