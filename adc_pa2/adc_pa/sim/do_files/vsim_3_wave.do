@@ -17,14 +17,15 @@ add wave -noupdate /tb_adc_pa/adc_conv_flag
 add wave -noupdate -radix unsigned /tb_adc_pa/adc_data_ch0
 add wave -noupdate -radix unsigned /tb_adc_pa/adc_data_ch1
 
-add wave -noupdate /tb_adc_pa/tx_mode_i;
-add wave -noupdate /tb_adc_pa/axi_en;      
-add wave -noupdate /tb_adc_pa/axi_data_i;
-add wave -noupdate /tb_adc_pa/axi_we_i;
-add wave -noupdate /tb_adc_pa/axi_addr_i;
-add wave -noupdate /tb_adc_pa/axi_vd_o;
-add wave -noupdate /tb_adc_pa/axi_data_o;
-add wave -noupdate /tb_adc_pa/axi_irq_o;
+add wave -noupdate /tb_adc_pa/tx_mode_i
+add wave -noupdate /tb_adc_pa/axi_en     
+add wave -noupdate /tb_adc_pa/axi_data_i
+add wave -noupdate /tb_adc_pa/axi_we_i
+add wave -noupdate /tb_adc_pa/axi_addr_i
+add wave -noupdate /tb_adc_pa/axi_vd_o
+add wave -noupdate /tb_adc_pa/axi_data_o
+add wave -noupdate /tb_adc_pa/axi_irq_o
+add wave -noupdate /tb_adc_pa/rezult
 
 
 # -------------------- Внутренние сигналы тестируемого модуля (uut) --------------------
@@ -54,9 +55,11 @@ add wave -noupdate /uut.bram_interface_module/axi_vd_o
 add wave -noupdate /uut.bram_interface_module/axi_data_o
 add wave -noupdate /uut.bram_interface_module/axi_irq_o
 add wave -noupdate /uut.bram_interface_module/reg_result
+add wave -noupdate /uut.bram_interface_module/measurement_result
 add wave -noupdate /uut.bram_interface_module/irq_enable
 add wave -noupdate /uut.bram_interface_module/threshold_exceeded
 add wave -noupdate /uut.bram_interface_module/threshold_prev 
+add wave -noupdate /uut.bram_interface_module/reg_ctrl
 
 add wave -noupdate /uut.pulse_stretcher/tx_active_out
 add wave -noupdate /uut.pulse_stretcher/in_rising

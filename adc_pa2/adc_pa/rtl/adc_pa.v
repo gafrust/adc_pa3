@@ -78,7 +78,7 @@ RES RES(
 // Signali polzovatelskoi logiki
     .module_enable(module_enable),  // bit [0] razreshenie raboti
     .irq_enable(irq_enable),     // bit [1] razreshenie prerivania
-    .measurement_result({avg_ch1[13:0],avg_ch0[13:0]}),  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
+    .measurement_result({avg_ch1[13:0],avg_ch0[13:0]}),  // rezultat izmerenia (Upad[31:16], Uotr[15:0])
     .measurement_ready(avg_ready)  // flag gotovnosti rezultata
 );
 
