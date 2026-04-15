@@ -25,10 +25,10 @@ input clk,
 output reg rst
     );
     
-reg [4:0]rst_delay = 0;
+reg [7:0]rst_delay = 0;
 always @(posedge clk)
-rst_delay <= {rst_delay[3:0], 1'b1};
+rst_delay <= {rst_delay[6:0], 1'b1};
 
 always @*
-  rst = ~rst_delay[4];
+  rst = ~rst_delay[7];
 endmodule

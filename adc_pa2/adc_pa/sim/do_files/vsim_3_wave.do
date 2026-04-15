@@ -69,6 +69,8 @@ add wave -noupdate /uut.pulse_stretcher/in_rising
 add wave -noupdate /uut.pulse_stretcher/in_sync
 add wave -noupdate /uut.pulse_stretcher/in_prev
 
+add wave -noupdate /uut.RES/rst_i
+
 
 
 # -------------------- Счётчики (по отдельным битам, если нужно) --------------------

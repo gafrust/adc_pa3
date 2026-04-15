@@ -1,7 +1,7 @@
 `timescale 1 ns/1 ns
 
 module adc_pa(
-    input clk_120_i,
+    input CLK_GL,
     (* DONT_TOUCH = "yes" *) input tx_active_i,
     (* DONT_TOUCH = "yes" *) input [3:0] tx_mode_i, //Regim raboti peredatchika
                              input adc_sdo_i,
@@ -50,10 +50,11 @@ reg adc_sck_reg;
 (* DONT_TOUCH = "yes" *)  wire         irq_enable;     // bit [1] razreshenie prerivania
 (* DONT_TOUCH = "yes" *)  reg [31:0] measurement_result;  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
 (* DONT_TOUCH = "yes" *)  wire        measurement_ready;  // flag gotovnosti rezultata
+ wire clk_120_i;
 
 
 RES RES(
-    .clk(clk_120_i),
+    .clk(CLK_GL),
     .rst(rst_i)
 );
 
@@ -63,7 +64,7 @@ RES RES(
 
 
  bram_interface_module bram_interface_module(
-    .clk_i(clk_120_i),          // 120 МГц
+    .clk_i(CLK_GL),          // 120 МГц
     .rst_i(rst_i),
     .tx_active_i(tx_active_i),
     .tx_mode(tx_mode_i),
@@ -108,6 +109,7 @@ adc_averager adc_averager (
 );
 
 
+assign clk_120_i = module_enable? CLK_GL : 1'b1; //module_enable
 
 
 
@@ -156,9 +158,9 @@ always @(posedge clk_120_i or posedge rst_i) begin
         adc_sdo_ibuf <= adc_sdo_i;
         tx_active_ibuf <= tx_active_i;
         if(avg_ready) begin
-         if (tx_mode_i == 9)
-        measurement_result <= 32'd200;//32'd1677721600; //Proverka prerivania dla Pramogo //32'd200; //Proverka prerivania dla otragonnogo
-     else
+     //    if (tx_mode_i == 9)
+   //Eto bila proverka raboti prerivania   //  measurement_result <= 32'd200;//32'd1677721600; //Proverka prerivania dla Pramogo //32'd200; //Proverka prerivania dla otragonnogo
+    // else
           measurement_result <= {avg_ch1[15:0],avg_ch0[15:0]}; // rezultat izmerenia (Upad[31:16], Uotr[15:0])
         end
     end

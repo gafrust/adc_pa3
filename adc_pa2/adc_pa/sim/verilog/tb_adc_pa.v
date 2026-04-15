@@ -3,7 +3,7 @@
 module tb_adc_pa();
 
 // Signali
-reg         clk_120_i;
+reg        clk_120_i;
 reg         adc_sdo_i;
 reg       tx_active_i;
 wire        adc_sck_o;
@@ -38,7 +38,7 @@ reg [31:0] rezult;
 
 // Instancirovanie modula
 adc_pa uut (
-    .clk_120_i  (clk_120_i),
+    .CLK_GL(clk_120_i),//.clk_120_i  (clk_120_i),
     .adc_sck_o  (adc_sck_o),
     .adc_conv_o (adc_conv_o),
     .adc_sdo_i  (adc_sdo_i),
@@ -95,6 +95,16 @@ initial begin
     test_data <= {14'd10, 2'b11, 14'd5};
     
     $display("=== Nachalo testa ===");
+
+     @(posedge clk_120_i);
+    axi_en_i <= 1;
+    axi_we_i <= 1;
+    axi_addr_i <= 32'h0;
+    axi_data_i <= 32'h0;         // razreshenie prezivanii (irq_enable)
+    @(posedge clk_120_i);
+    axi_we_i <= 0;
+    axi_en_i <= 0;
+    @(posedge clk_120_i);
  // Zapisivaem dannie v kalibrovochnie registri
 for (adr_cnt = 8'h0x08; adr_cnt < 8'h0x48; adr_cnt = adr_cnt + 8'h0x04) begin
     @(posedge clk_120_i);
