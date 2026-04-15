@@ -48,7 +48,7 @@ reg adc_sck_reg;
 (* DONT_TOUCH = "yes" *)       wire avg_ready;
 (* DONT_TOUCH = "yes" *)  wire        module_enable; // bit [0] razreshenie raboti
 (* DONT_TOUCH = "yes" *)  wire         irq_enable;     // bit [1] razreshenie prerivania
-(* DONT_TOUCH = "yes" *)  wire [31:0] measurement_result;  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
+(* DONT_TOUCH = "yes" *)  reg [31:0] measurement_result;  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
 (* DONT_TOUCH = "yes" *)  wire        measurement_ready;  // flag gotovnosti rezultata
 
 
@@ -78,7 +78,7 @@ RES RES(
 // Signali polzovatelskoi logiki
     .module_enable(module_enable),  // bit [0] razreshenie raboti
     .irq_enable(irq_enable),     // bit [1] razreshenie prerivania
-    .measurement_result({avg_ch1[13:0],avg_ch0[13:0]}),  // rezultat izmerenia (Upad[31:16], Uotr[15:0])
+    .measurement_result(measurement_result),  // rezultat izmerenia (Upad[31:16], Uotr[15:0])
     .measurement_ready(avg_ready)  // flag gotovnosti rezultata
 );
 
@@ -106,6 +106,9 @@ adc_averager adc_averager (
      .avg_ch0(avg_ch0),
      .avg_ch1(avg_ch1)
 );
+
+
+
 
 
 // ============================================================================
@@ -152,6 +155,12 @@ always @(posedge clk_120_i or posedge rst_i) begin
     end else begin
         adc_sdo_ibuf <= adc_sdo_i;
         tx_active_ibuf <= tx_active_i;
+        if(avg_ready) begin
+         if (tx_mode_i == 9)
+        measurement_result <= 32'd200;//32'd1677721600; //Proverka prerivania dla Pramogo //32'd200; //Proverka prerivania dla otragonnogo
+     else
+          measurement_result <= {avg_ch1[15:0],avg_ch0[15:0]}; // rezultat izmerenia (Upad[31:16], Uotr[15:0])
+        end
     end
 end
 

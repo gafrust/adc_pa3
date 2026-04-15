@@ -11,7 +11,7 @@ wire        adc_conv_o;
 wire     adc_conv_flag;
 
 reg [3:0] tx_mode_i;
-reg  axi_en;      
+reg  axi_en_i;      
 reg  [31:0] axi_data_i;
 reg  axi_we_i;
 reg  [31:0] axi_addr_i;
@@ -81,7 +81,7 @@ initial begin
     sr_sum_ch0 = 0;
     sr_sum_ch1 = 0;
 
-    axi_en <= 0;      
+    axi_en_i <= 0;      
     
     axi_we_i <= 0;
     axi_addr_i <= 32'h0x0008;
@@ -98,33 +98,33 @@ initial begin
  // Zapisivaem dannie v kalibrovochnie registri
 for (adr_cnt = 8'h0x08; adr_cnt < 8'h0x48; adr_cnt = adr_cnt + 8'h0x04) begin
     @(posedge clk_120_i);
-    axi_en <= 1;
+    axi_en_i <= 1;
     axi_we_i <= 1;
     axi_addr_i <= adr_cnt;
     // Dla adresa 0x2C (tx_mode=9) pishem 100, inache 10000+adr_cnt
     if (adr_cnt == 8'h0x2C) begin
-        axi_data_i <= 32'd4133;//32'd10;//32'd3355443200; //Proverka prerivania dla Pramogo //32'd100; //Proverka prerivania dla otragonnogo
+        axi_data_i <= 32'd100;//32'd4133;//32'd10;//32'd3355443200; //Proverka prerivania dla Pramogo //32'd100; //Proverka prerivania dla otragonnogo
         end
     else begin
         axi_data_i <= 32'd10000 + adr_cnt;
         end
 end
     @(posedge clk_120_i);
-    axi_en <= 0;
+    axi_en_i <= 0;
     axi_we_i <= 0;
 
 
 
 
 
-// Vo vtorom cicle (imitacia izmerenii)
-for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
+  // Vo vtorom cicle (imitacia izmerenii)
+ for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
     #100;
     @(posedge clk_120_i);
-    axi_en <= 1;
+    axi_en_i <= 1;
     axi_we_i <= 1;
     axi_addr_i <= 32'h0;
-    axi_data_i <= 32'hffffffff;         // razreshenie prezivanii (irq_enable)
+    axi_data_i <= 32'h3;         // razreshenie prezivanii (irq_enable)
     @(posedge clk_120_i);
     axi_we_i <= 0;
     tx_active_i <= 0;
@@ -144,6 +144,9 @@ for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
         //==============================================================================
     //$display("Testovie dannie: 0x%08X", test_data);
     for (i_sample=31 ; i_sample >=0; i_sample=i_sample-1) begin
+    if (tx_mode_cnt == 9)
+        test_data <= 32'd200;//32'd1677721600; //Proverka prerivania dla Pramogo //32'd200; //Proverka prerivania dla otragonnogo
+     else
     test_data = { 14'(i_sample+tx_mode_cnt), 2'b11, 14'((31+tx_mode_cnt) - i_sample) };
    // $display("Testovie dannie: 0x%08X", test_data);
     //sum_ch0 = sum_ch0 + i_sample;
@@ -169,15 +172,15 @@ for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
         //==============================================================================
 
 
-@(posedge clk_120_i);
-@(posedge clk_120_i);
+  @(posedge clk_120_i);
+  @(posedge clk_120_i);
     // Gdem  avg_ready
     @(posedge uut.avg_ready);
     $display("uut.avg_ready=%0d", uut.avg_ready);
 
     @(posedge clk_120_i);
      tx_active_i <= 0;
-    //axi_en <= 0;
+    axi_en_i <= 0;
     //axi_we_i <= 0;
     //measurement_ready <= 0;
     
@@ -185,13 +188,21 @@ for (tx_mode_cnt = 0; tx_mode_cnt < 16; tx_mode_cnt = tx_mode_cnt + 1) begin
     @(posedge clk_120_i);
     $display("tx_mode_cnt=%0d, tx_mode_i = %0d", tx_mode_cnt, tx_mode_i);
     $display("tx_mode=%0d, axi_irq_o = %0d", tx_mode_cnt, axi_irq_o);
-end
+    end
 
-@(posedge clk_120_i);
-    axi_en <= 1;
+ 
+    axi_en_i <= 0;
+    repeat(20)@(posedge clk_120_i);
+    axi_en_i <= 1;
+    @(posedge clk_120_i);
     axi_we_i <= 0;
     axi_addr_i <= 32'h4;
+    @(posedge clk_120_i);
+    @(posedge clk_120_i);
     rezult <= axi_data_o; 
+    @(posedge clk_120_i);
+    @(posedge clk_120_i);
+
 
 
 

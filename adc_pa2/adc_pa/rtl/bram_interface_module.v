@@ -48,6 +48,8 @@ module bram_interface_module (
     
   (* DONT_TOUCH = "yes" *)  reg        axi_vd_reg;         // vnutrennii signal validnosti dannih
   (* DONT_TOUCH = "yes" *)  integer i;
+   reg flag_h, flag_l;
+
 
     
     
@@ -67,6 +69,8 @@ module bram_interface_module (
             calib_u_pad      <= 16'd0;
             calib_u_otr      <= 16'd0;
             threshold_exceeded <= 1'b0;
+            flag_h <= 0;
+            flag_l <= 0;
             
         end else begin
             axi_vd_reg <= 1'b0;  // po umolchaniu strob ne activen
@@ -125,8 +129,11 @@ module bram_interface_module (
             // Obnovlenie rezultata izmerenii
             if (measurement_ready) begin
                 reg_result <= measurement_result;
-                if ((measurement_result[31:16] < reg_calib[tx_mode][31:16]) ||
-                                   (reg_calib[tx_mode][15:0] < measurement_result[15:0])) begin
+                flag_h <= (measurement_result[31:16] < reg_calib[tx_mode][31:16]);
+                flag_l <= (reg_calib[tx_mode][15:0] < measurement_result[15:0]);
+               
+                if ((irq_enable && (measurement_result[31:16] < reg_calib[tx_mode][31:16])) ||
+                                  (irq_enable && (reg_calib[tx_mode][15:0] < measurement_result[15:0]))) begin
                                     axi_irq_o <= 1'b1;
                                     end
                                    end else if (!tx_active_i) begin

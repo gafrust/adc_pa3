@@ -60,6 +60,9 @@ add wave -noupdate /uut.bram_interface_module/irq_enable
 add wave -noupdate /uut.bram_interface_module/threshold_exceeded
 add wave -noupdate /uut.bram_interface_module/threshold_prev 
 add wave -noupdate /uut.bram_interface_module/reg_ctrl
+add wave -noupdate /uut.bram_interface_module/reg_calib
+add wave -noupdate /uut.bram_interface_module/flag_h
+add wave -noupdate /uut.bram_interface_module/flag_l
 
 add wave -noupdate /uut.pulse_stretcher/tx_active_out
 add wave -noupdate /uut.pulse_stretcher/in_rising
