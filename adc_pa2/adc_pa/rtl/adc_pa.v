@@ -15,8 +15,8 @@ module adc_pa(
    (* DONT_TOUCH = "yes" *)  output wire         axi_irq_o,      // prerivanie (previshenie porogov)
           (* IOB = "TRUE" *) output reg adc_sck_o,
           (* IOB = "TRUE" *) output reg adc_conv_o,
-    //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch0,      // Rigistr dannih kanala 0 
-    //(* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch1,      // Rigistr dannih kanala 1 
+    (* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch0,      // Rigistr dannih kanala 0 
+    (* DONT_TOUCH = "yes" *)  output reg [13:0] adc_data_ch1,      // Rigistr dannih kanala 1 
    (* DONT_TOUCH = "yes" *)  output reg adc_conv_flag
 
 );
@@ -27,8 +27,8 @@ module adc_pa(
 
 // Signali polzovatelskoi logiki
 wire rst_i;
-reg tx_active_ibuf;
-reg        data_ready;  
+(* DONT_TOUCH = "yes" *) reg tx_active_ibuf;
+(* DONT_TOUCH = "yes" *) reg        data_ready;  
 (* DONT_TOUCH = "yes" *)  reg tx_active_ibuf_prev;
 (* DONT_TOUCH = "yes" *) wire tx_active_rise;
 reg [3:0] adc_sck_counter;
@@ -41,8 +41,8 @@ reg adc_sck_reg;
 (* DONT_TOUCH = "yes" *)  wire tx_active_o;
 (* DONT_TOUCH = "yes" *)  wire [3:0] tx_mode_i_fix;
 
-(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch0;      // Rigistr dannih kanala 0 
-(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch1;      // Rigistr dannih kanala 1
+//(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch0;      // Rigistr dannih kanala 0 
+//(* DONT_TOUCH = "yes" *)  reg [13:0] adc_data_ch1;      // Rigistr dannih kanala 1
 (* DONT_TOUCH = "yes" *)  wire [17:0] avg_ch0;
 (* DONT_TOUCH = "yes" *)  wire [17:0] avg_ch1;
 (* DONT_TOUCH = "yes" *)       wire avg_ready;
@@ -169,23 +169,23 @@ end
 // ============================================================================
 // Rigistri
 // ============================================================================
-reg [16:0] delay_counter;
-reg [8:0]  measurement_counter;
-reg [31:0] sum_u_pad;
-reg [5:0]  sum_u_otr;
+(* DONT_TOUCH = "yes" *) reg [16:0] delay_counter;
+(* DONT_TOUCH = "yes" *) reg [8:0]  measurement_counter;
+(* DONT_TOUCH = "yes" *) reg [31:0] sum_u_pad;
+(* DONT_TOUCH = "yes" *) reg [5:0]  sum_u_otr;
 
-reg adc_sdo_sync_reg1;
-reg adc_sdo_sync_reg2;
+(* DONT_TOUCH = "yes" *) reg adc_sdo_sync_reg1;
+(* DONT_TOUCH = "yes" *) reg adc_sdo_sync_reg2;
 wire adc_sdo_sync;
-reg [1:0] state;
-reg [4:0] samples_cnt;
+(* DONT_TOUCH = "yes" *)reg [1:0] state;
+(* DONT_TOUCH = "yes" *)reg [4:0] samples_cnt;
 
 
 // Rigistri
 
-reg [5:0]  bit_counter;        // Schetchik bit (0-31)
-reg        data_valid_ch0;     // Flag deistvitelnih dannih kanala 0
-reg        data_valid_ch1;     // Flag deistvitelnih dannih kanala 1
+(* DONT_TOUCH = "yes" *)reg [5:0]  bit_counter;        // Schetchik bit (0-31)
+(* DONT_TOUCH = "yes" *)reg        data_valid_ch0;     // Flag deistvitelnih dannih kanala 0
+(* DONT_TOUCH = "yes" *)reg        data_valid_ch1;     // Flag deistvitelnih dannih kanala 1
 
        // Prisvaivaem znachenia dla state mashini
 localparam IDLE = 2'd0;
