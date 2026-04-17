@@ -1,7 +1,8 @@
 `timescale 1 ns/1 ns
 
 module adc_pa(
-    input CLK_GL,
+    input rst_i,
+    input clk_120_i,
     (* DONT_TOUCH = "yes" *) input tx_active_i,
     (* DONT_TOUCH = "yes" *) input [3:0] tx_mode_i, //Regim raboti peredatchika
                              input adc_sdo_i,
@@ -26,7 +27,7 @@ module adc_pa(
 
 
 // Signali polzovatelskoi logiki
-wire rst_i;
+
 (* DONT_TOUCH = "yes" *) reg tx_active_ibuf;
 (* DONT_TOUCH = "yes" *) reg        data_ready;  
 (* DONT_TOUCH = "yes" *)  reg tx_active_ibuf_prev;
@@ -50,13 +51,14 @@ reg adc_sck_reg;
 (* DONT_TOUCH = "yes" *)  wire         irq_enable;     // bit [1] razreshenie prerivania
 (* DONT_TOUCH = "yes" *)  reg [31:0] measurement_result;  // pezultat izmerenia (Upad[31:16], Uotr[15:0])
 (* DONT_TOUCH = "yes" *)  wire        measurement_ready;  // flag gotovnosti rezultata
- wire clk_120_i;
+ wire rst;
+ //wire rst_i;
 
 
-RES RES(
-    .clk(CLK_GL),
-    .rst(rst_i)
-);
+// RES RES(
+//     .clk(clk_120_i),
+//     .rst(rst_i)
+// );
 
 
 
@@ -64,7 +66,7 @@ RES RES(
 
 
  bram_interface_module bram_interface_module(
-    .clk_i(CLK_GL),          // 120 МГц
+    .clk_i(clk_120_i),          // 120 МГц
     .rst_i(rst_i),
     .tx_active_i(tx_active_i),
     .tx_mode(tx_mode_i),
@@ -88,7 +90,7 @@ RES RES(
 
 (* DONT_TOUCH = "yes" *) pulse_stretcher pulse_stretcher(
     .clk(clk_120_i),          // 120 МГц
-    .rst(rst_i),
+    .rst(rst),
     (* DONT_TOUCH = "yes" *) .tx_active_i(tx_active_i), // korotkii impuls (8 нс)
     (* DONT_TOUCH = "yes" *) .tx_mode_i(tx_mode_i),
     (* DONT_TOUCH = "yes" *) .tx_mode_i_fix(tx_mode_i_fix),
@@ -99,7 +101,7 @@ RES RES(
 
 adc_averager adc_averager (
      .clk(adc_sck_reg),
-     .rst(rst_i),
+     .rst(rst),
      .data_valid(data_ready),
      .adc_data_ch0(adc_data_ch0),
      .adc_data_ch1(adc_data_ch1),
@@ -109,15 +111,15 @@ adc_averager adc_averager (
 );
 
 
-assign clk_120_i = module_enable? CLK_GL : 1'b1; //module_enable
+assign rst = module_enable? rst_i : 1'b1; //module_enable
 
 
 
 // ============================================================================
 // Logika delitela chastoti
 // ============================================================================
-always @(posedge clk_120_i or posedge rst_i) begin
-    if(rst_i) begin
+always @(posedge clk_120_i or posedge rst) begin
+    if(rst) begin
         adc_sck_counter <= 4'd0;
         adc_sck_reg <= 1'b0;
         adc_conv_o <= 1'b0;
@@ -150,8 +152,8 @@ assign tx_active_rise = tx_active_ibuf && !tx_active_ibuf_prev;
 // ============================================================================
 // Vhodnoi registr IOB (Otdelnii always-blok)
 // ============================================================================
-always @(posedge clk_120_i or posedge rst_i) begin
-    if(rst_i) begin
+always @(posedge clk_120_i or posedge rst) begin
+    if(rst) begin
         adc_sdo_ibuf <= 1'b0;
         tx_active_ibuf <= 1'b0;
     end else begin
@@ -194,8 +196,8 @@ localparam MEASURE = 2'd2;
 
 
 // Osnovnoi konecnii avtomat
-always @(posedge adc_sck_reg or posedge rst_i) begin
-    if (rst_i) begin
+always @(posedge adc_sck_reg or posedge rst) begin
+    if (rst) begin
         delay_counter       <= 17'd0;
         measurement_counter <= 9'd0;
         sum_u_pad           <= 32'd0;
@@ -258,8 +260,8 @@ end
 // ============================================================================
 // Sinhronizacia vhodnogo signala (Zachita ot metastabilnosti)
 // ============================================================================
-always @(posedge clk_120_i or posedge rst_i) begin
-    if (rst_i) begin
+always @(posedge clk_120_i or posedge rst) begin
+    if (rst) begin
         adc_sdo_sync_reg1 <= 1'b0;
         adc_sdo_sync_reg2 <= 1'b0;
     end else begin
@@ -280,8 +282,8 @@ assign adc_sdo_sync = adc_sdo_sync_reg2;
 // 4. Po perednemu frontu SCK zaciklivaem bit s SDO
 // ============================================================================
 
-always @(posedge adc_sck_reg or posedge rst_i) begin
-    if (rst_i) begin
+always @(posedge adc_sck_reg or posedge rst) begin
+    if (rst) begin
         shift_reg_ch0   <= 14'd0;
         shift_reg_ch1   <= 14'd0;
         bit_counter     <= 6'd0;

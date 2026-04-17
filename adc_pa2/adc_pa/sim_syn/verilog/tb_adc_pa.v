@@ -3,6 +3,7 @@
 module tb_adc_pa();
 
 // Signali
+reg         rst_i;
 reg        clk_120_i;
 reg         adc_sdo_i;
 reg       tx_active_i;
@@ -38,7 +39,8 @@ reg [31:0] rezult;
 
 // Instancirovanie modula
 adc_pa uut (
-    .CLK_GL(clk_120_i),//.clk_120_i  (clk_120_i),
+    .rst_i (rst_i),
+    .clk_120_i  (clk_120_i),
     .adc_sck_o  (adc_sck_o),
     .adc_conv_o (adc_conv_o),
     .adc_sdo_i  (adc_sdo_i),
@@ -65,6 +67,12 @@ end
 // Osnovnoi process modelirovania
 initial begin
     // Iniacilizacia
+     rst_i <= 1'b1;
+     #100
+
+     #100
+     rst_i <= 1'b0;
+
     adc_sdo_i = 1'b1;
     bit_cnt = 0;
     tx_active_i = 1'b0;
@@ -96,6 +104,8 @@ initial begin
     
     $display("=== Nachalo testa ===");
 
+
+
      @(posedge clk_120_i);
     axi_en_i <= 1;
     axi_we_i <= 1;
@@ -103,7 +113,7 @@ initial begin
     axi_data_i <= 32'h0;         // razreshenie prezivanii (irq_enable)
     @(posedge clk_120_i);
     axi_we_i <= 0;
-    axi_en_i <= 0; // ne vlijaet na zapusk, tak kak logika v bram module kotorii taktiruetsa ot global clock
+    axi_en_i <= 0;
     @(posedge clk_120_i);
  // Zapisivaem dannie v kalibrovochnie registri
 for (adr_cnt = 8'h0x08; adr_cnt < 8'h0x48; adr_cnt = adr_cnt + 8'h0x04) begin

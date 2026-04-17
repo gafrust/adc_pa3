@@ -8,6 +8,7 @@ quietly WaveActivateNextPane {} 0
 
 # -------------------- Сигналы верхнего уровня тестбенча --------------------
 add wave -noupdate -divider {Testbench top}
+add wave -noupdate /tb_adc_pa/rst_i
 add wave -noupdate /tb_adc_pa/clk_120_i
 add wave -noupdate /tb_adc_pa/tx_active_i
 add wave -noupdate /tb_adc_pa/adc_sdo_i
